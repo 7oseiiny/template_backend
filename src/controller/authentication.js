@@ -46,7 +46,7 @@ exports.login = async (req, res, next) => {
         if (!user.isVerified) return res.status(403).json({ message: "يجب تفعيل الحساب أولاً" });
         let validPassword = await bcrypt.compare(password, user.password)
         if (!validPassword) return res.status(400).send({ message: 'invalid credentials' })
-        const token = jwt.sign({ _id: user._id, role: user.role }, 'SECRET_KEY', { expiresIn: "2h" });
+        const token = jwt.sign({ _id: user._id, role: user.role }, 'SECRET_KEY');
         delete user.password
         res.send({ token, user })
         // notification.send({
