@@ -1,5 +1,5 @@
 const Clipboard = require("../model/clipboard");
-const notification = require("../utils/notification");
+const notification = require('../notifications/index');
 
 exports.createClipboard = async (req, res) => {
     try {
@@ -8,10 +8,8 @@ exports.createClipboard = async (req, res) => {
         req.body.content = filePath||req.body.content; // المسار المحلي للصورة
         let clipboard = await Clipboard.create(req.body);
         res.send({ message: "clipboard created", data: clipboard });
-         notification.send({
-            userId: req.user._id,
-            message: "99999999999999999"          
-        },req)
+        notification.notify(req.user._id,'clipboard created')
+        
     } catch (err) {
         res.status(500).send({ error: err.message });
     }

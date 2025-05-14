@@ -46,29 +46,6 @@ app.get('*', (req, res) => {
 const connectedUsers = new Map();
 
 // لما اليوزر يتصل
-io.on('connection', (socket) => {
-    const userId = socket.handshake.query.userId;
-
-    if (userId) {
-        if (!connectedUsers.has(userId)) {
-            connectedUsers.set(userId, []);
-        }
-        connectedUsers.get(userId).push(socket);
-        console.log(`✅ User ${userId} connected. Total sockets: ${connectedUsers.get(userId).length}`);
-
-        socket.on('disconnect', () => {
-            const sockets = connectedUsers.get(userId) || [];
-            const updatedSockets = sockets.filter(s => s !== socket);
-            if (updatedSockets.length === 0) {
-                connectedUsers.delete(userId);
-                console.log(`❌ User ${userId} disconnected (all sockets closed)`);
-            } else {
-                connectedUsers.set(userId, updatedSockets);
-                console.log(`⚠️ Socket disconnected. Remaining sockets for ${userId}: ${updatedSockets.length}`);
-            }
-        });
-    }
-});
 
 // Endpoint نستخدمه من Postman عشان نبعِت إشعار
 app.post('/sendnotification', (req, res) => {
