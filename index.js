@@ -13,19 +13,15 @@ const path = require('path');
 ////////////////////////////////////////////////////////////////////////////////////////////////
 const express = require('express');
 const cors = require("cors");
+const http = require('http');
 const router = require('./src/routes/appRouter');
 const { connectDB } = require('./src/configs/mongoDB');
 const errorHandler = require('./src/middlewares/errorHandling');
-const http = require('http');
-const socketIo = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server, {
-    cors: {
-        origin: '*'
-    }
-});
+
+require('./src/notifications').setupSocket(server);
 
 app.use(express.json());
 app.use(cors());
@@ -92,6 +88,4 @@ app.post('/sendnotification', (req, res) => {
 
 app.use(errorHandler); // بعد جميع الـ routes
 
-server.listen(3000, () => {
-    console.log('🔔 Notification Service and API running on http://localhost:3000');
-});
+server.listen(3000,() => {console.log("listening")});

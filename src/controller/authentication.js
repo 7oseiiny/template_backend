@@ -3,9 +3,8 @@ const jwt = require('jsonwebtoken')
 const userModel = require('../model/user');
 const Role = require('../model/role');
 const nodemailer = require("nodemailer");
-const notification = require("../utils/notification");
 const AppError = require('../utils/appError');
-
+const notification = require('../notifications/index');
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -49,10 +48,7 @@ exports.login = async (req, res, next) => {
         const token = jwt.sign({ _id: user._id, role: user.role }, 'SECRET_KEY');
         delete user.password
         res.send({ token, user })
-        // notification.send({
-        //     userId: "user12333",
-        //     message: "99999999999999999"          
-        // })
+        notification.notify(user._id,'تم تسجيل الدخول بنجاح')
     } catch (err) { 
         next(new AppError(err, 502));
      }

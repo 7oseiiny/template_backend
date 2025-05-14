@@ -1,9 +1,9 @@
 // socket-client.js
 const io = require('socket.io-client');
 
-const socket = io('http://localhost:4000', {
+const socket = io('http://localhost:3000', {
   query: {
-    userId: 'user12333'
+    userId: '67e7307eb3aaae23dddaa1fb'
   }
 });
 
