@@ -6,7 +6,7 @@ import 'dart:async';
 class ApiService {
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: dotenv.env['API_BASE_URL'] ?? 'http://localhost:3000/api/',
+      baseUrl: dotenv.env['API_BASE_URL'] ?? 'http://192.168.1.12:3000/api/',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
     ),

@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
     if (userId != null) {
       NotificationSocketService().connect(
         userId: userId!,
-        serverUrl: 'http://localhost:3000', // عدل الرابط حسب الباك اند
+        serverUrl: 'http://192.168.1.12:3000', // عدل الرابط حسب الباك اند
       );
     }
 
