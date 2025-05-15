@@ -8,11 +8,14 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:local_notifier/local_notifier.dart';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  await NotificationService.initialize(); // هذا السطر مهم جداً
+  await Firebase.initializeApp(); // تهيئة Firebase
+  await NotificationService.initialize();
   await localNotifier.setup(appName: 'Clipboard App');
   // إشعار تجريبي عند بدء التطبيق باستخدام local_notifier
   LocalNotification(
@@ -28,7 +31,19 @@ void main() async {
     }
   }
 
+  // إعداد استقبال إشعارات FCM
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   runApp(const MyApp());
+}
+
+// دالة لمعالجة الإشعارات في الخلفية
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  await NotificationService.showLocalNotification(
+    message.notification?.title ?? 'تنبيه',
+    message.notification?.body ?? '',
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -36,6 +51,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // طلب صلاحية FCM عند التشغيل
+    FirebaseMessaging.instance.requestPermission();
+    // استقبال الإشعارات أثناء foreground
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      NotificationService.showLocalNotification(
+        message.notification?.title ?? 'تنبيه',
+        message.notification?.body ?? '',
+      );
+    });
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
