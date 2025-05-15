@@ -6,6 +6,8 @@ import 'screens/home_screen.dart';
 import 'notifications/notification_service.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:local_notifier/local_notifier.dart';
+import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +19,15 @@ void main() async {
     title: 'اختبار (local_notifier)',
     body: 'هذا إشعار تجريبي من local_notifier',
   ).show();
+
+  // طلب صلاحية الإشعارات على أندرويد (API 33+)
+  if (Platform.isAndroid) {
+    final androidInfo = await DeviceInfoPlugin().androidInfo;
+    if (androidInfo.version.sdkInt >= 33) {
+      await AwesomeNotifications().requestPermissionToSendNotifications();
+    }
+  }
+
   runApp(const MyApp());
 }
 
