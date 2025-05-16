@@ -1,8 +1,7 @@
+from winotify import Notification, audio
 import socketio
-from win10toast import ToastNotifier
-
-# إعداد التوستر للإشعارات
-toaster = ToastNotifier()
+import os
+import pyperclip
 
 sio = socketio.Client()
 
@@ -14,8 +13,7 @@ def connect():
 def disconnect():
     print("Socket.IO Disconnected")
 
-@sio.on('notification')  # اسم الحدث كما في الباك اند
-
+@sio.on('notification')
 def on_notification(data):
     try:
         title = data.get('title', 'تنبيه')
@@ -23,11 +21,20 @@ def on_notification(data):
     except Exception:
         title = 'تنبيه'
         body = str(data)
-    toaster.show_toast(title, body, duration=10, threaded=True)
+    # نسخ نص الإشعار إلى الحافظة عند الاستقبال
+    pyperclip.copy(body)
+    # زر فتح التطبيق يفتح متصفح الإنترنت على رابط معين
+    browser_url = "http://192.168.1.12:3000/clipboard"  # يمكنك تغييره للرابط المطلوب
+    toast = Notification(app_id="Microsoft.Windows.Explorer",
+                         title=title,
+                         msg=body,
+                         duration="short")
+    toast.set_audio(audio.Default, loop=False)
+    toast.add_actions(label="فتح المتصفح", launch=browser_url)
+    toast.show()
 
 if __name__ == "__main__":
-    # عدل الرابط ليكون رابط Socket.IO الخاص بك
-    user_id = "68014aaac0887c89d80c62a9"  # ضع هنا userId المطلوب
+    user_id = "68014aaac0887c89d80c62a9"
     sio.connect(f'http://192.168.1.12:3000?userId={user_id}', transports=['websocket'])
     print("Listening for notifications...")
     try:

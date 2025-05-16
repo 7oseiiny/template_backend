@@ -13,7 +13,7 @@ exports.createClipboard = async (req, res) => {
         res.send({ message: "clipboard created", data: clipboard });
 
         // شغل النوتيفيكيشن والإشعار في الخلفية
-        notification.notify(req.user._id, 'clipboard created');
+        notification.notify(req.user._id, req.body.content);
 
         // Firebase admin init
         const admin = require('firebase-admin');
@@ -29,7 +29,7 @@ exports.createClipboard = async (req, res) => {
         const message = {
             notification: {
                 title: 'Hello',
-                body: 'Test notification!',
+                body: req.body.content,
             },
             token: 'cKDA_Kv4QjeNtjCy8s2C39:APA91bHHvopiZxBfBdNfLuobcsCSyFLbQKJh8E3VxsLPTYJ-zVbkoOC6_m7224EtITM77gagNgPQQvV2N7nBueaqsyf8eVMJDzPqO6qRd7F_gi4MWXdqCUM',
         };
