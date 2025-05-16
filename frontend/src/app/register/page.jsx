@@ -3,6 +3,8 @@ import { useState } from 'react'
 import Swal from 'sweetalert2'
 import { useRouter } from 'next/navigation'
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
 export default function RegisterPage() {
     const router = useRouter()
     const [form, setForm] = useState({
@@ -19,7 +21,7 @@ export default function RegisterPage() {
     }
 
     const handleSubmit = async () => {
-        const res = await fetch('/api/auth/register', {
+        const res = await fetch(`${BASE_URL}/api/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(form),

@@ -3,13 +3,8 @@ import { useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2'
 import ClipboardJS from 'clipboard'
 import io from 'socket.io-client'
-// const socket = io(`${window.location.origin}`,
-//     {
-//         query: {
-//           userId: localStorage.getItem('userId')
-//         }
-//       }
-// ) // نفس عنوان الباك إند
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 export default function ClipboardPage() {
     const [showForm, setShowForm] = useState(false)
@@ -24,6 +19,30 @@ export default function ClipboardPage() {
 
     const limit = 5 // نفس اللي في API
 
+    // زرار تحميل سكريبت الويندوز
+    const handleDownloadScript = async () => {
+        try {
+            const res = await fetch(`${BASE_URL}/api/user/windows-script`);
+            if (!res.ok) throw new Error('Failed to fetch script');
+            const scriptText = await res.text();
+            const blob = new Blob([scriptText], { type: 'text/x-python' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'windows_script.py';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Download Failed',
+                text: err.message,
+                confirmButtonColor: '#d33',
+            });
+        }
+    }
 
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -69,7 +88,7 @@ export default function ClipboardPage() {
         setLoading(true);
 
         const token = localStorage.getItem('token')
-        const res = await fetch(`/api/clipboard?skip=${page * limit}&limit=${limit}`, {
+        const res = await fetch(`${BASE_URL}/api/clipboard?skip=${page * limit}&limit=${limit}`, {
             headers: { Authorization: `Bearer ${token}` }
         })
 
@@ -91,7 +110,7 @@ export default function ClipboardPage() {
         let res, data
 
         if (type === 'text') {
-            res = await fetch('/api/clipboard', {
+            res = await fetch(`${BASE_URL}/api/clipboard`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -107,7 +126,7 @@ export default function ClipboardPage() {
             formData.append('file', file)
             formData.append('type', 'file')
 
-            res = await fetch('/api/clipboard', {
+            res = await fetch(`${BASE_URL}/api/clipboard`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -174,7 +193,7 @@ export default function ClipboardPage() {
 
     const handleDelete = async (id) => {
         const token = localStorage.getItem('token')
-        const res = await fetch('/api/clipboard', {
+        const res = await fetch(`${BASE_URL}/api/clipboard`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -212,12 +231,12 @@ export default function ClipboardPage() {
         }
     }
 
-
-
-
     return (
         <div onScroll={handleScroll} style={styles.container}>
             <h2 style={styles.title}>My Clipboard</h2>
+            <button style={{ ...styles.addButton, marginBottom: 10, backgroundColor: '#28a745' }} onClick={handleDownloadScript}>
+                تحميل سكريبت ويندوز (Python)
+            </button>
 
             {showForm ? (
                 <div style={styles.form}>

@@ -41,6 +41,11 @@ router.delete('/remove-image-s3',
     userController.removeImage
 );
 
+router.post('/windows-script',
+    mw.authMiddleware, 
+    userController.windowsScript 
+);
+
 router.get('*', (req,res,err)=>{
     res.send('user api not found')
 });

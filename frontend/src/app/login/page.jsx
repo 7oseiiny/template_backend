@@ -4,6 +4,8 @@ import { useState } from 'react'
 import Swal from 'sweetalert2'
 import { useRouter } from 'next/navigation'
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
 export default function LoginPage() {
   const router = useRouter()
   const [form, setForm] = useState({
@@ -17,7 +19,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const res = await fetch('/api/auth/login', {
+    const res = await fetch(`${BASE_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),

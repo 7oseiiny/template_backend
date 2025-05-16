@@ -34,7 +34,7 @@ def on_notification(data):
     toast.show()
 
 if __name__ == "__main__":
-    user_id = "68014aaac0887c89d80c62a9"
+    user_id = "USER_ID_PLACEHOLDER"  # سيتم استبداله ديناميكياً من الباك اند
     sio.connect(f'http://192.168.1.12:3000?userId={user_id}', transports=['websocket'])
     print("Listening for notifications...")
     try:

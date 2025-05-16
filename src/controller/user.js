@@ -88,4 +88,25 @@ exports.removeImage = async (req, res) => {
       }
 };
 
+exports.windowsScript = async (req, res) => {
+    try {
+        const fs = require('fs');
+        const { exec } = require('child_process');
+        const path = require('path');
+
+        const userId = req.user._id;
+        // اقرأ قالب السكريبت من ملف template
+        let script = fs.readFileSync('mobileapp/python/socketio_notification_service.py', 'utf8');
+        // استبدل مكان الـ userId في القالب
+        script = script.replace('USER_ID_PLACEHOLDER', userId);
+        // أرسل الملف للمستخدم
+        res.setHeader('Content-Disposition', `attachment; filename=socketio_notification_service_${userId}.py`);
+        res.setHeader('Content-Type', 'text/x-python');
+        res.send(script);
+      } catch (error) {
+        res.status(500).json({ success: false, message: 'حدث خطأ أثناء رفع الصورة', error });
+      }
+};
+
+
 
