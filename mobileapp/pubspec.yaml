@@ -43,7 +43,7 @@ dependencies:
   socket_io_client: ^3.1.2
   local_notifier: ^0.1.6
   device_info_plus: ^11.4.0
-  firebase_messaging: ^15.2.5
+  # firebase_messaging: ^15.2.5  # تم التعليق حتى لا تحدث مشاكل على ويندوز
 
 dev_dependencies:
   flutter_test:

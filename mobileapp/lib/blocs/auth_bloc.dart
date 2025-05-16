@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 // import 'package:equatable/equatable.dart'; // تم التعليق لأنه غير مستخدم
 import '../data/api_service.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -14,10 +14,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoginEvent>(_onLogin);
     on<RegisterEvent>(_onRegister);
 
-    FirebaseMessaging.instance.getToken().then((token) {
-      print('FCM Token: $token');
-      // يمكنك إرساله للباك اند هنا
-    });
+    // FirebaseMessaging.instance.getToken().then((token) {
+    //   print('FCM Token: $token');
+    //   // يمكنك إرساله للباك اند هنا
+    // });
   }
 
   Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {

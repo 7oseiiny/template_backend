@@ -8,14 +8,16 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:local_notifier/local_notifier.dart';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  await Firebase.initializeApp(); // تهيئة Firebase
-  await NotificationService.initialize();
+  // if (!Platform.isWindows) {
+  //   await Firebase.initializeApp();
+  //   await NotificationService.initialize();
+  // }
   await localNotifier.setup(appName: 'Clipboard App');
   // إشعار تجريبي عند بدء التطبيق باستخدام local_notifier
   LocalNotification(
@@ -31,35 +33,39 @@ void main() async {
     }
   }
 
-  // إعداد استقبال إشعارات FCM
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  // إعداد استقبال إشعارات FCM فقط إذا لم يكن ويندوز
+  // if (!Platform.isWindows) {
+  //   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  // }
 
   runApp(const MyApp());
 }
 
 // دالة لمعالجة الإشعارات في الخلفية
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  await NotificationService.showLocalNotification(
-    message.notification?.title ?? 'تنبيه',
-    message.notification?.body ?? '',
-  );
-}
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//   await Firebase.initializeApp();
+//   await NotificationService.showLocalNotification(
+//     message.notification?.title ?? 'تنبيه',
+//     message.notification?.body ?? '',
+//   );
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // طلب صلاحية FCM عند التشغيل
-    FirebaseMessaging.instance.requestPermission();
-    // استقبال الإشعارات أثناء foreground
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      NotificationService.showLocalNotification(
-        message.notification?.title ?? 'تنبيه',
-        message.notification?.body ?? '',
-      );
-    });
+    // طلب صلاحية FCM عند التشغيل فقط إذا لم يكن ويندوز
+    // if (!Platform.isWindows) {
+    //   FirebaseMessaging.instance.requestPermission();
+    //   // استقبال الإشعارات أثناء foreground
+    //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //     NotificationService.showLocalNotification(
+    //       message.notification?.title ?? 'تنبيه',
+    //       message.notification?.body ?? '',
+    //     );
+    //   });
+    // }
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
